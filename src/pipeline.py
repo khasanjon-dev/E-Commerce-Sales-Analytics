@@ -4,6 +4,7 @@ from config import LOG_FORMAT, LOG_LEVEL
 from extract import download_data, validate_data
 from load import create_tables, load_dimensions, load_facts
 from transform import cleand_data, feature_engineering
+from analytics import aggregations, reports
 
 logging.basicConfig(
     level=LOG_LEVEL,
@@ -23,6 +24,8 @@ def run_pipeline():
         create_tables.run()
         load_dimensions.run()
         load_facts.run()
+        aggregations.run()
+        reports.run()
         logger.info("Pipeline completed successfully")
     except Exception as e:
         logger.error(f"Pipeline failed: {e}", exc_info=True)
