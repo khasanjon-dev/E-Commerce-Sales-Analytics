@@ -1,6 +1,3 @@
-Excellent — let’s step up the complexity and realism. I’ll give you a **second project as a PM**, with **clear business context, constraints, and detailed requirements**. This one will strengthen your **data modeling + batch processing + analytics layer** skills significantly. 🚀
-
----
 
 # 📄 Project Assignment (PM → Data Engineer)
 

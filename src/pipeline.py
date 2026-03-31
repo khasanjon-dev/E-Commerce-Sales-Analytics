@@ -1,5 +1,5 @@
 import logging
-from extract import download_data
+from extract import download_data, validate_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -13,6 +13,7 @@ def run_pipeline():
     logger.info("Pipeline started")
     try:
         download_data.run()
+        validate_data.run()
         logger.info("Pipeline completed successfully")
     except Exception as e:
         logger.error(f"Pipeline failed: {e}", exc_info=True)
