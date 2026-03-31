@@ -1,12 +1,13 @@
 import logging
 
+from config import LOG_FORMAT, LOG_LEVEL
 from extract import download_data, validate_data
 from load import create_tables, load_dimensions, load_facts
 from transform import cleand_data, feature_engineering
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    level=LOG_LEVEL,
+    format=LOG_FORMAT,
 )
 
 logger = logging.getLogger(__name__)

@@ -4,27 +4,37 @@ import os
 import kagglehub
 import pandas as pd
 
+from config import PARQUET_ENGINE, RAW_DIR, RAW_PARQUET
+
 logger = logging.getLogger(__name__)
 
 
-def run():
+def run() -> None:
+    """Download online retail dataset from Kaggle and save as Parquet."""
     logger.info("Downloading dataset from Kaggle...")
 
-    path = kagglehub.dataset_download("tunguz/online-retail")
+    try:
+        path = kagglehub.dataset_download("tunguz/online-retail")
+        csv_path = os.path.join(path, "online_retail.csv")
 
-    csv_path = os.path.join(path, "online_retail.csv")
+        logger.info("Reading CSV into memory...")
+        df = pd.read_csv(csv_path, encoding="ISO-8859-1")
 
-    logger.info("Reading CSV into memory...")
-    df = pd.read_csv(csv_path, encoding="ISO-8859-1")
+        # Optimize dtypes for memory efficiency
+        df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], format="%m/%d/%y %H:%M")
+        df["CustomerID"] = df["CustomerID"].astype("Int64")
+        df["Quantity"] = df["Quantity"].astype("int32")
 
-    # Optional: basic dtype optimization
-    df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], format="%m/%d/%y %H:%M")
-    df["CustomerID"] = df["CustomerID"].astype("Int64")
+        # Optimize string columns
+        for col in ["InvoiceNo", "StockCode", "Country"]:
+            df[col] = df[col].astype("category")
 
-    os.makedirs("data/raw", exist_ok=True)
-    parquet_path = "data/raw/online_retail.parquet"
+        RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-    logger.info("Writing Parquet file...")
-    df.to_parquet(parquet_path, engine="pyarrow", index=False)
+        logger.info("Writing Parquet file...")
+        df.to_parquet(RAW_PARQUET, engine=PARQUET_ENGINE, index=False)
 
-    logger.info(f"Parquet saved to {parquet_path}")
+        logger.info(f"Parquet saved to {RAW_PARQUET}")
+    except Exception as e:
+        logger.error(f"Error downloading/processing data: {e}", exc_info=True)
+        raise

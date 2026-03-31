@@ -1,23 +1,33 @@
 import json
 import logging
-import os
 
 import pandas as pd
+
+from config import PARQUET_ENGINE, RAW_DIR, RAW_PARQUET, VALIDATION_REPORT
 
 logger = logging.getLogger(__name__)
 
 
-def run():
+def run() -> None:
+    """Validate raw data and generate validation report."""
     logger.info("Validating raw data...")
-    df = pd.read_parquet("data/raw/online_retail.parquet", engine="pyarrow")
-    report = {
-        "shape": df.shape,
-        "columns": list(df.columns),
-        "missing_values": df.isnull().sum().to_dict(),
-        "duplicate_rows": int(df.duplicated().sum()),
-        "sample": df.head(3).to_dict(orient="records"),
-    }
-    os.makedirs("data/raw", exist_ok=True)
-    with open("data/raw/validation_report.json", "w") as f:
-        json.dump(report, f, indent=2, default=str)
-    logger.info("Validation report saved to data/raw/validation_report.json")
+
+    try:
+        df = pd.read_parquet(RAW_PARQUET, engine=PARQUET_ENGINE)
+        report = {
+            "shape": df.shape,
+            "columns": list(df.columns),
+            "missing_values": df.isnull().sum().to_dict(),
+            "duplicate_rows": int(df.duplicated().sum()),
+            "sample": df.head(3).to_dict(orient="records"),
+        }
+
+        RAW_DIR.mkdir(parents=True, exist_ok=True)
+
+        with open(VALIDATION_REPORT, "w") as f:
+            json.dump(report, f, indent=2, default=str)
+
+        logger.info(f"Validation report saved to {VALIDATION_REPORT}")
+    except Exception as e:
+        logger.error(f"Error validating data: {e}", exc_info=True)
+        raise
