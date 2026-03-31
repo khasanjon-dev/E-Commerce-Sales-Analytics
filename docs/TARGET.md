@@ -374,11 +374,3 @@ If you complete it properly, you will demonstrate:
 * Ability to build **production-style pipelines**
 * Capability to translate **business questions into data systems**
 
----
-
-If you want next level (🔥), I can give you:
-
-👉 **Streaming (Kafka-style) real-time project**
-👉 **FAANG-level system design version of this project**
-
-Just tell me 👍
