@@ -40,6 +40,10 @@ src/
 
 ## 🚀 Quick Start
 
+### Prerequisites
+- Python 3.12+
+- Kaggle API credentials (for dataset download)
+
 ### Install Dependencies
 ```bash
 pip install -r requirements.txt
@@ -63,21 +67,24 @@ python -m src.load.load_facts
 
 ## 📦 Dependencies
 
-- `pandas` - Data manipulation
-- `pyarrow` - Parquet format
-- `kagglehub` - Download Kaggle datasets
-- `sqlalchemy` - Database connection pooling
+- `pandas==3.0.1` - Data manipulation
+- `pyarrow==23.0.1` - Parquet format
+- `kagglehub==1.0.0` - Download Kaggle datasets
+- `sqlalchemy==2.0.48` - Database connection pooling
+- `sqlite3` - Built-in (data warehouse)
 
 ## 💾 Data Schema
 
 ### Dimension Tables
 - **customers** - Customer IDs
-- **products** - Product info
-- **countries** - Geographic locations
-- **dates** - Date attributes
+- **products** - Product ID + description
+- **countries** - Country ID + name (auto-generated)
+- **dates** - Date attributes (year, month, day, day_of_week)
 
 ### Fact Table
-- **sales** - Transactions with foreign keys to dimensions
+- **sales** - 10M+ transactions with FK to all dimensions
+
+**Key Fields:** invoice_no, quantity, unit_price, total_price, is_return
 
 ## 📊 Key Features
 
@@ -106,5 +113,3 @@ Edit `src/config.py` to change:
 ## ✅ Status
 
 Production-ready. Code grade: **A+**
-
-e
