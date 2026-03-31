@@ -8,41 +8,45 @@ logger = logging.getLogger(__name__)
 
 def run():
     logger.info("Starting data cleaning...")
-    df = pd.read_csv("data/raw/online_retail.csv")
-    original_count = len(df)
-    logger.info(f"Loaded {original_count} rows")
 
-    # Clean column names
-    df.columns = (
-        df.columns.str.lower()
-        .str.replace(" ", "_")
-        .str.replace(r"[^a-z0-9_]", "", regex=True)
-    )
+    # Read raw Parquet
+    raw_path = "data/raw/online_retail.parquet"
+    df = pd.read_parquet(raw_path, engine="pyarrow")
+    logger.info(f"Raw data loaded: {df.shape[0]} rows, {df.shape[1]} columns")
 
-    # Drop missing customer_id
-    before = len(df)
-    df = df.dropna(subset=["customer_id"])
-    logger.info(f"Dropped {before - len(df)} rows with missing customer_id")
+    # 1️⃣ Remove rows with nulls in critical fields
+    critical_cols = [
+        "InvoiceNo",
+        "StockCode",
+        "Quantity",
+        "InvoiceDate",
+        "CustomerID",
+        "UnitPrice",
+    ]
+    initial_rows = df.shape[0]
+    df = df.dropna(subset=critical_cols)
+    removed_nulls = initial_rows - df.shape[0]
+    logger.info(f"Removed {removed_nulls} rows with null critical fields")
 
-    # Convert invoice_date
-    df["invoice_date"] = pd.to_datetime(
-        df["invoice_date"], format="%d-%m-%Y %H:%M", errors="coerce"
-    )
-    before = len(df)
-    df = df.dropna(subset=["invoice_date"])
-    logger.info(f"Dropped {before - len(df)} rows with invalid dates")
+    # 2️⃣ Convert timestamps
+    try:
+        df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], format="%m/%d/%y %H:%M")
+        logger.info("Converted InvoiceDate to datetime")
+    except Exception as e:
+        logger.warning(
+            f"Failed to convert InvoiceDate with specific format, falling back: {e}"
+        )
+        df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], errors="coerce")
 
-    # Ensure numeric types
-    df["quantity"] = pd.to_numeric(df["quantity"], errors="coerce")
-    df["unit_price"] = pd.to_numeric(df["unit_price"], errors="coerce")
-    before = len(df)
-    df = df.dropna(subset=["quantity", "unit_price"])
-    logger.info(f"Dropped {before - len(df)} rows with non-numeric quantity/price")
+    # Optional: extract date features
+    df["year"] = df["InvoiceDate"].dt.year
+    df["month"] = df["InvoiceDate"].dt.month
+    df["day"] = df["InvoiceDate"].dt.day
+    df["day_of_week"] = df["InvoiceDate"].dt.day_name()
 
-    # Flag returns
-    df["is_return"] = df["quantity"] < 0
-    logger.info(f"Flagged {df['is_return'].sum()} return rows")
-
-    os.makedirs("data/cleaned", exist_ok=True)
-    df.to_parquet("data/cleaned/online_retail_cleaned.parquet", index=False)
-    logger.info(f"Cleaned data saved with {len(df)} rows")
+    # Save cleaned Parquet
+    clean_dir = "data/clean"
+    os.makedirs(clean_dir, exist_ok=True)
+    clean_path = os.path.join(clean_dir, "online_retail_clean.parquet")
+    df.to_parquet(clean_path, engine="pyarrow", index=False)
+    logger.info(f"Cleaned data saved to {clean_path} ({df.shape[0]} rows)")
