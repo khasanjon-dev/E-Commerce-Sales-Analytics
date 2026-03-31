@@ -18,13 +18,13 @@ EXTRACT → VALIDATE → TRANSFORM → LOAD
  Kaggle   JSON Report  Features  SQLite DB
 ```
 
-| Stage | Input | Output |
-|-------|-------|--------|
-| Extract | Kaggle | `data/raw/online_retail.parquet` |
-| Validate | Raw data | `data/raw/validation_report.json` |
-| Transform | Raw data | `data/clean/online_retail_clean.parquet` |
-| Feature | Clean data | `data/processed/online_retail_features.parquet` |
-| Load | Features | `data/warehouse/warehouse.db` |
+| Stage     | Input      | Output                                          |
+|-----------|------------|-------------------------------------------------|
+| Extract   | Kaggle     | `data/raw/online_retail.parquet`                |
+| Validate  | Raw data   | `data/raw/validation_report.json`               |
+| Transform | Raw data   | `data/clean/online_retail_clean.parquet`        |
+| Feature   | Clean data | `data/processed/online_retail_features.parquet` |
+| Load      | Features   | `data/warehouse/warehouse.db`                   |
 
 ## 📂 Project Structure
 
@@ -41,20 +41,24 @@ src/
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Python 3.12+
 - Kaggle API credentials (for dataset download)
 
 ### Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### Run Pipeline
+
 ```bash
 python -m src.pipeline
 ```
 
 Or individually:
+
 ```bash
 python -m src.extract.download_data
 python -m src.extract.validate_data
@@ -76,12 +80,14 @@ python -m src.load.load_facts
 ## 💾 Data Schema
 
 ### Dimension Tables
+
 - **customers** - Customer IDs
 - **products** - Product ID + description
 - **countries** - Country ID + name (auto-generated)
 - **dates** - Date attributes (year, month, day, day_of_week)
 
 ### Fact Table
+
 - **sales** - 10M+ transactions with FK to all dimensions
 
 **Key Fields:** invoice_no, quantity, unit_price, total_price, is_return
@@ -97,6 +103,7 @@ python -m src.load.load_facts
 ## 📍 Configuration
 
 Edit `src/config.py` to change:
+
 - File paths
 - Database location
 - Parquet engine
@@ -109,7 +116,3 @@ Edit `src/config.py` to change:
 - Top customers?
 - Top countries?
 - Seasonal trends?
-
-## ✅ Status
-
-Production-ready. Code grade: **A+**
