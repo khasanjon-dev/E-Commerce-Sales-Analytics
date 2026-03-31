@@ -9,50 +9,69 @@ logger = logging.getLogger(__name__)
 def run():
     logger.info("Starting data cleaning...")
 
-    # Read raw Parquet
+    # 𝟏️⃣ Read raw Parquet
     raw_path = "data/raw/online_retail.parquet"
     df = pd.read_parquet(raw_path, engine="pyarrow")
     logger.info(f"Raw data loaded: {df.shape[0]} rows, {df.shape[1]} columns")
 
-    # 1️⃣ Remove rows with nulls in critical fields
+    # 𝟐️⃣ Normalize column names
+    df.columns = df.columns.str.strip()
+    df.columns = df.columns.str.replace(" ", "_")
+    df.columns = df.columns.str.lower()
+    df.columns = df.columns.str.replace(r"[^\w_]", "", regex=True)
+
+    df.rename(
+        columns={
+            "invoicedate": "invoice_date",
+            "invoiceno": "invoice_no",
+            "stockcode": "stock_code",
+            "customerid": "customer_id",
+            "unitprice": "unit_price",
+        },
+        inplace=True,
+    )
+
+    # 𝟑️⃣ Remove nulls in critical columns
     critical_cols = [
-        "InvoiceNo",
-        "StockCode",
-        "Quantity",
-        "InvoiceDate",
-        "CustomerID",
-        "UnitPrice",
+        "invoice_no",
+        "stock_code",
+        "quantity",
+        "invoice_date",
+        "customer_id",
+        "unit_price",
     ]
-    initial_rows = df.shape[0]
+
+    before = df.shape[0]
     df = df.dropna(subset=critical_cols)
-    removed_nulls = initial_rows - df.shape[0]
-    logger.info(f"Removed {removed_nulls} rows with null critical fields")
+    logger.info(f"Removed {before - df.shape[0]} rows with null critical fields")
 
-    # 2️⃣ Handle negative quantities (returns)
-    # Option: keep them but flag
-    df["is_return"] = df["Quantity"] < 0
-    negative_count = df["is_return"].sum()
-    logger.info(f"Flagged {negative_count} returned rows (negative quantity)")
+    # 𝟒️⃣ Remove invalid values
+    before = df.shape[0]
+    df = df[(df["quantity"] != 0) & (df["unit_price"] > 0)]
+    logger.info(f"Removed {before - df.shape[0]} invalid rows")
 
-    # 3️⃣ Convert timestamps
+    # 𝟓️⃣ Convert timestamps
     try:
-        df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], format="%m/%d/%y %H:%M")
-        logger.info("Converted InvoiceDate to datetime")
+        df["invoice_date"] = pd.to_datetime(df["invoice_date"], format="%m/%d/%y %H:%M")
+        logger.info("Converted invoice_date using specified format")
     except Exception as e:
-        logger.warning(
-            f"Failed to convert InvoiceDate with specific format, falling back: {e}"
-        )
-        df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], errors="coerce")
+        logger.warning(f"Fallback datetime parsing: {e}")
+        df["invoice_date"] = pd.to_datetime(df["invoice_date"], errors="coerce")
 
-    # Optional: extract date features
-    df["year"] = df["InvoiceDate"].dt.year
-    df["month"] = df["InvoiceDate"].dt.month
-    df["day"] = df["InvoiceDate"].dt.day
-    df["day_of_week"] = df["InvoiceDate"].dt.day_name()
+    # Drop rows where datetime failed
+    before = df.shape[0]
+    df = df.dropna(subset=["invoice_date"])
+    logger.info(f"Dropped {before - df.shape[0]} rows with invalid dates")
 
-    # Save cleaned Parquet
+    # 𝟔️⃣ Sort for consistency
+    df = df.sort_values("invoice_date")
+
+    # 𝟕️⃣ Save cleaned Parquet
     clean_dir = "data/clean"
     os.makedirs(clean_dir, exist_ok=True)
     clean_path = os.path.join(clean_dir, "online_retail_clean.parquet")
+
     df.to_parquet(clean_path, engine="pyarrow", index=False)
-    logger.info(f"Cleaned data saved to {clean_path} ({df.shape[0]} rows)")
+
+    logger.info(f"Cleaned data saved to {clean_path}")
+    logger.info(f"Final dataset shape: {df.shape}")
