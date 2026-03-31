@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def run():
     logger.info("Validating raw data...")
-    df = pd.read_csv("data/raw/online_retail.csv")
+    df = pd.read_csv("data/raw/online_retail.csv", encoding="ISO-8859-1")
     report = {
         "shape": df.shape,
         "columns": list(df.columns),
@@ -22,3 +22,6 @@ def run():
     with open("data/raw/validation_report.json", "w") as f:
         json.dump(report, f, indent=2, default=str)
     logger.info("Validation report saved to data/raw/validation_report.json")
+
+
+run()
