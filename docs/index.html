@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global E-Commerce Sales Analytics | Khasanjon</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+    <div class="container nav-container">
+        <div class="logo">Khasanjon<span>.dev</span></div>
+        <ul class="nav-links">
+            <li><a href="#context">Context</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#data-model">Data Model</a></li>
+            <li><a href="#stack">Tech Stack</a></li>
+        </ul>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="container">
+        <div class="badge">Data Engineering Project</div>
+        <h1>Global E-Commerce Sales Analytics Platform</h1>
+        <p class="hero-subtitle">An end-to-end data engineering pipeline for processing and analyzing global e-commerce
+            transactions, turning raw CSV data into actionable business intelligence.</p>
+        <div class="hero-btns">
+            <a href="https://github.com/khasanjon-dev/E-Commerce-Sales-Analytics.git" target="_blank"
+               rel="noopener noreferrer" class="btn btn-primary">
+                <i class="fab fa-github"></i> View Repository
+            </a>
+            <a href="#reports" class="btn btn-secondary">View Reports</a>
+        </div>
+    </div>
+</header>
+
+<section id="context" class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2>📌 Business Context</h2>
+            <p>Bridging the gap between raw data and strategic decision-making</p>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>🔴 The Problem</h3>
+                <p>Transactional data scattered across fragmented CSV files with no centralized analytics system.
+                This creates data silos and prevents real-time visibility into global operations and performance metrics.</p>
+            </div>
+            <div class="card">
+                <h3>✅ The Solution</h3>
+                <p>Structured data warehouse providing actionable insights:</p>
+                <ul class="custom-list">
+                    <li>🎯 <strong>Customer Behavior:</strong> Segment high-value customers</li>
+                    <li>📈 <strong>Revenue Trends:</strong> Track growth metrics quarterly</li>
+                    <li>⭐ <strong>Product Performance:</strong> Identify top/underperforming SKUs</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section bg-light">
+    <div class="container">
+        <div class="section-header">
+            <h2>🎯 Project Objectives</h2>
+        </div>
+        <div class="objectives-grid">
+            <div class="obj-item">
+                <i class="fas fa-file-import"></i>
+                <h4>Build ETL</h4>
+                <p>Automate data extraction and cleaning.</p>
+            </div>
+            <div class="obj-item">
+                <i class="fas fa-broom"></i>
+                <h4>Transform</h4>
+                <p>Apply feature engineering and validation.</p>
+            </div>
+            <div class="obj-item">
+                <i class="fas fa-database"></i>
+                <h4>Warehouse</h4>
+                <p>Implement a scalable Star Schema model.</p>
+            </div>
+            <div class="obj-item">
+                <i class="fas fa-chart-line"></i>
+                <h4>Analytics</h4>
+                <p>Generate SQL-based business reports.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="architecture" class="section">
+    <div class="container text-center">
+        <div class="section-header">
+            <h2>🏗️ Architecture Diagram</h2>
+            <p>End-to-end data pipeline flow from ingestion to analytics</p>
+        </div>
+        <div class="diagram-placeholder">
+            <img src="assets/project-architecture-gemini.png" alt="Architecture Diagram">
+        </div>
+        <p class="diagram-desc"><strong>Raw Data</strong> → <strong>Extract</strong> → <strong>Transform</strong> → <strong>Load</strong> → <strong>Data Warehouse</strong> → <strong>Analytics & Reports</strong></p>
+    </div>
+</section>
+
+<section id="data-model" class="section bg-light">
+    <div class="container">
+        <div class="section-header">
+            <h2>🧩 Data Model (Star Schema)</h2>
+            <p>Denormalized schema optimized for fast analytical queries</p>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="tag-fact">📊 Fact Table: Sales</h3>
+                <ul class="schema-list">
+                    <li><span>sale_id</span> (Primary Key)</li>
+                    <li><span>customer_id</span> (Foreign Key)</li>
+                    <li><span>product_id</span> (Foreign Key)</li>
+                    <li><span>date_id</span> (Foreign Key)</li>
+                    <li><span>country_id</span> (Foreign Key)</li>
+                    <li><span>quantity</span></li>
+                    <li><span>unit_price</span></li>
+                    <li><span>total_revenue</span></li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3 class="tag-dim">📁 Dimension Tables</h3>
+                <div class="dim-grid">
+                    <div>
+                        <strong>👥 Customers</strong>
+                        <p>ID, Name, Segment</p>
+                    </div>
+                    <div>
+                        <strong>📦 Products</strong>
+                        <p>ID, Description, Category</p>
+                    </div>
+                    <div>
+                        <strong>📅 Dates</strong>
+                        <p>ID, Year, Month, Quarter</p>
+                    </div>
+                    <div>
+                        <strong>🌍 Countries</strong>
+                        <p>ID, Name, Region</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="stack" class="section">
+    <div class="container text-center">
+        <div class="section-header">
+            <h2>⚙️ Tech Stack</h2>
+            <p>Production-ready tools for data engineering</p>
+        </div>
+        <div class="stack-badges">
+            <span class="badge-tech">🐍 Python</span>
+            <span class="badge-tech">🐼 Pandas</span>
+            <span class="badge-tech">💾 SQLite</span>
+            <span class="badge-tech">📊 SQL</span>
+            <span class="badge-tech">🔧 Logging</span>
+            <span class="badge-tech">📝 Makefile</span>
+        </div>
+    </div>
+</section>
+
+<section id="reports" class="section bg-dark text-white">
+    <div class="container">
+        <div class="section-header">
+            <h2 style="color: white;">📈 Key Business Insights</h2>
+        </div>
+        <div class="grid-3">
+            <div class="insight-card">
+                <h3>60%</h3>
+                <p>Revenue generated by top 10% of customers.</p>
+            </div>
+            <div class="insight-card">
+                <h3>UK Market</h3>
+                <p>Highest revenue-generating country in 2026.</p>
+            </div>
+            <div class="insight-card">
+                <h3>Q4 Spike</h3>
+                <p>35% increase in sales during holiday seasons.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="section">
+    <div class="container">
+        <hr style="border: 0; border-top: 1px solid var(--border); margin-bottom: 3rem;">
+        <div class="about-grid">
+            <div>
+                <h2>👨‍💻 Khasanjon</h2>
+                <p><strong>Data Engineer</strong> specializing in Python-based ETL pipelines, scalable backend architectures, and data warehouse design.</p>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">4+ years of experience in data engineering, analytics platforms, and cloud infrastructure.</p>
+                <div class="social-links">
+                    <a href="https://github.com/khasanjon-dev/E-Commerce-Sales-Analytics.git" target="_blank"
+                       rel="noopener noreferrer" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/khasanjon-dev/" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i
+                            class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="project-structure">
+                <h4>📁 Project Structure</h4>
+                <code>/data (raw/clean/processed)<br>
+/src (etl modules)<br>
+/docs (gh-pages)<br>
+/reports (analytics)</code>
+            </div>
+        </div>
+        <p class="copyright">&copy; 2026 Khasanjon | E-Commerce Sales Analytics | <a href="https://github.com" target="_blank" style="color: inherit; text-decoration: underline;">GitHub Pages</a></p>
+    </div>
+</footer>
+
+</body>
+</html>
